@@ -1,7 +1,7 @@
 #import "@local/simple-note:0.0.1": *
 #show: simple-note.with(
   title: [
-    Bayes statistics and Monte Carlo simulations
+    Bayes Learning and Monte Carlo simulations
   ],
   date: datetime(year: 2026, month: 2, day: 24),
   authors: (
@@ -156,28 +156,60 @@ $
 A Bayesian statistical model is made of
 + $f(x|theta) = f_(X|theta.alt) (x|theta)$: the conditional density of $X$ given $theta$, called *likelihood*: given the parameter $theta$ the observation process $X$ is distributed according to $f(x|theta)$
 + $pi(theta)=f_theta.alt (theta)$: the marginal density of $theta$, called *prior*: a probability distribution over the parameter space $Theta$.
-+ The joint distributiof $(theta.alt, X)$: $f(theta, x) := f(x|theta) pi(theta)$
++ The joint distribution of $(theta.alt, X)$: $f(theta, x) := f(x|theta) pi(theta)$
 + The marginal distribution of $X$:$ m(x) = f_X (x) = integral f (x|theta) pi(theta) dif theta $
 + the posterior distribution of $theta.alt$: $ pi(theta|x) = f_(theta.alt|X) (theta|x)= (f(x|theta) pi(theta)) / (integral_Theta f(x|u) pi(u) dif u) $
 
+A Bayesian model needs the *likelihood* of the observations $x_1: n=(x_1, dots, x_n)$.i.e $f(x_1, dots, x_n|theta)$ and a *prior* for the parameter $theta$, i.e. $pi(theta)$.
+The core of the inference is the computation of the *posterior* distribution.
+
+== Independent and identically distributed (i.i.d.) observations
+The vector $(x_1, dots, x_n)$ is an i.i.d. samples from $f(x|theta)$ if the joint likelihood (joint density of the observations) factorizes as
+$
+  f(x_1, dots, x_n|theta) = product_(i=1)^n f(x_i|theta).
+$
+where $f(x_i|theta)$ is the marginal density of the variable $x_i$ given the parameter $theta$.
+
+If the observations are i.i.d. then the posterior distribution is given by
+$
+  pi(theta|x_1: n) = (product_(i=1)^n f(x_i|theta) pi(theta)) / (integral_Theta product_(i=1)^n f(x_i|u) pi(u) dif u)
+$
+
+== Expectation and Variance
+The expectation of a random variable $X$ is defined as
+$
+  EE[X] = cases(
+    sum_x x f(x) quad & "discrete case",
+    integral_(-oo)^(+oo) x f(x) dif x quad & "continuous case"
+  )
+$
+provided that the sum or the integral converges.
+
+The variance of a random variable $X$ is defined as
+$
+  "Var"(X) = EE[(X - EE[X])^2] = EE[X^2] - (EE[X])^2
+$
+That is
+$
+  "Var"(X) = cases(
+    sum_x (x-EE[X])^2 f(x) quad & "discrete case",
+    integral_(-oo)^(+oo) (x-EE[X])^2 f(x) dif x quad & "continuous case"
+  )
+$
+
 #pagebreak()
-== Bayesian Core
-=== Prior
-=== Likelihood
-=== Posterior
 
-
-
-
-== Prior and posterior distributions
-- The joint distribution
-- The marginal distribution
-- the posterior distribution
-
-=== Conditional density
-
-
-
-=== Joint distribution
-
-
+= Basic conjugate models
+== Normal-Normal model
+Assume that $x_1, dots, x_n$ are i.i.d from a $cal(N)(mu, sigma^2)$(with known variance $sigma^2$) and that the prior distribution for $mu$ is a $cal(N)(mu_0, tau^2)$, the posterior distribution is again a normal distribution $cal(N)(mu_n, sigma_n^2)$ with
+$
+  mu_n = sigma^2 / (sigma^2 + n tau^2) mu_0 + (n tau^2) / (sigma^2 + n tau^2) 1 / n sum_(i=1)^n x_i, quad sigma_n^2 = (sigma^2 tau^2) / (sigma^2 + n tau^2).
+$
+And the predictive distribution is
+$
+  x_(n+1) tilde cal(N)(mu_n, sigma^2 + sigma_n^2).
+$
+Hence the we have that the posterior mean of $mu$ is
+$
+  EE[mu|x_1: n] = mu_n
+$
